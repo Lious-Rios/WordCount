@@ -84,7 +84,7 @@ int getCharNum(Words *words) {//从单词中统计字符
 				num++; //单词种类加一 
 			}
 		}
-	fout<<"characters:"<<charnum-1<<endl; 
+	fout<<"characters:  "<<charnum-1<<endl; 
 	fin.close(); //关闭文件
 	fout.close();//关闭文件 
 	return charnum; //返回字符数
@@ -131,7 +131,7 @@ void countCharNum(){//输出字符个数
 	ofstream fout;
 	fout.open("output.txt");
 	int n=getCharNum(words); //获取字符数 
-	fout<<"characters:"<<n<<endl;
+	fout<<"characters:  "<<n<<endl;
 	fout.close();
 } 
 
@@ -177,8 +177,8 @@ void Paper::fwrite(char * filename){//写文件
     }   
     vector<pair<string,int> > tVector;  
     sort(tMap,tVector);
-    fout<<"lines:"<<s<<endl;
-    fout<<"words:"<<wcnt<<endl;
+    fout<<"lines:  "<<s<<endl;
+    fout<<"words:  "<<wcnt<<endl;
     if (tVector.size()>10){
 		fout<<"频率最高的10个单词如下:"<<endl;
     	for(int i=0;i<10;i++)
@@ -187,7 +187,7 @@ void Paper::fwrite(char * filename){//写文件
     else{
     	fout<<"频率最高的"<<tVector.size()<<"个单词如下:"<<endl;
 		for(int i=0;i<tVector.size();i++)  
-	    	fout<<tVector[i].first<<": "<<tVector[i].second<<endl;
+	    	fout<<tVector[i].first<<":  "<<tVector[i].second<<endl;
 	}
 	fin.close();
 	fout.close();
