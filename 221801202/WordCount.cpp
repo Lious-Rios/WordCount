@@ -12,7 +12,8 @@ const int wordsmax=300;//最大单词数
 const int wordslength=7;//单词长度
 
 using namespace std;
-
+int num=0,i,lines=0,validnum=0;
+ 
 class Paper{//对文件的文章类 
 public:
 	void fread(char * filename);
@@ -31,49 +32,15 @@ int cmpare(const pair<string, int>& x, const pair<string, int>& y)  {  //value�
     return x.second > y.second;   
 }  
    
-void sort(map<string, int>& tMap,vector<pair<string, int> >& wordVector)  {  //词频排序 
+void sort(map<string, int>& tMap,vector<pair<string, int> >& tVector)  {  //词频排序 
     for (map<string, int>::iterator curr = tMap.begin(); curr != tMap.end(); curr++)   
-        wordVector.push_back(make_pair(curr->first, curr->second));    
+        tVector.push_back(make_pair(curr->first, curr->second));    
    
-    sort(wordVector.begin(), wordVector.end(), cmpare);  
-} 
+    sort(tVector.begin(), tVector.end(), cmpare);  
+}  
 
 bool isSeparator(char c){//判断分隔符：所有非数字且非字母 
 	return !(isupper(c)||islower(c)||isdigit(c));
-}
-
-bool isValidWord(string str){//判断有效单词 
-	if (str.length()<4)
-		return false;
-	char c[wordsmax*wordslength];
-	strcpy(c,str.c_str());//转为字符数组 
-	for (int i=0;i<4;i++){
-		if(!(isupper(c[i])||islower(c[i]))){
-			return false;
-		}
-	}
-}
-
-int CountLines(char *filename){//获取行数 
-	ifstream ReadFile;
-	int n=0;
-	char line[wordsmax/wordsPerRow];
-	string temp;
-	ReadFile.open(filename,ios::in);//用只读的方式读取文件
-	if(ReadFile.fail())//文件打开失败:返回0
-	{
-	   return 0;
-	}
-	else//文件存在
-	{
-	while(getline(ReadFile,temp)!=NULL)
-	{
-	 
-	   n++;
-	}
-	    return n;
-	}
-	ReadFile.close();
 }
 
 int getCharNum(Words *words) {//从单词中统计字符 
@@ -122,13 +89,49 @@ int getCharNum(Words *words) {//从单词中统计字符
 	fout.close();//关闭文件 
 	return charnum; //返回字符数
 }
+ 
+bool isValidWord(string str){//判断有效单词 
+	if (str.length()<4)
+		return false;
+	char c[10000];
+	strcpy(c,str.c_str());//转为字符数组 
+	for (int i=0;i<4;i++){
+		if((!(isupper(c[i])||islower(c[i])))){
+					
+			return false;
+		}	
+	}
+}
+
+int CountLines(char *filename){//获取行数 
+	ifstream ReadFile;
+	int n=0;
+	char line[wordsmax/wordsPerRow];
+	string temp;
+	ReadFile.open(filename,ios::in);//用只读的方式读取文件
+	if(ReadFile.fail())//文件打开失败:返回0
+	{
+	   return 0;
+	}
+	else//文件存在
+	{
+	while(getline(ReadFile,temp)!=NULL)
+	{
+	 
+	   n++;
+	}
+	    return n;
+	}
+	ReadFile.close();
+}
+
 
 void countCharNum(){//输出字符个数 
 	Words words[wordsmax] = {"",0}; //单词对象变量定义与初始化
 	ofstream fout;
 	fout.open("output.txt");
 	int n=getCharNum(words); //获取字符数 
-	fout<<"搜索出共"<<n<<"个字符。"<<endl;
+	fout<<"characters:"<<n<<endl;
 	fout.close();
 } 
 
@@ -147,11 +150,12 @@ void Paper::fread(char * filename){//读文件
 	}
  	ifs.close();
 }
-
+ 
 void Paper::fwrite(char * filename){//写文件 
 	int wcnt=0;//单词数量 
 	ifstream fin;
 	ofstream fout;
+	int s=CountLines("input.txt");
 	fin.open("input.txt",ios::app|ios::out);//打开文件 
 	fout.open("output.txt",ios::app|ios::out);
 	if(fin.fail())
@@ -161,7 +165,8 @@ void Paper::fwrite(char * filename){//写文件
 	}
     map<string, int> tMap;  
     string word; 
-    while (fin >> word) {//单词计数  	
+    while (fin >> word)  
+    {  	
 		transform(word.begin(),word.end(),word.begin(),::tolower);
 	    if(isValidWord(word)){
 	        pair<map<string,int>::iterator,bool> ret = tMap.insert(make_pair(word, 1));  
@@ -169,12 +174,30 @@ void Paper::fwrite(char * filename){//写文件
 	            ++ret.first->second; 
 				wcnt++;
 		} 
-    }
+    }   
+    vector<pair<string,int> > tVector;  
+    sort(tMap,tVector);
+    fout<<"lines:"<<s<<endl;
+    fout<<"words:"<<wcnt<<endl;
+    if (tVector.size()>10){
+		fout<<"频率最高的10个单词如下:"<<endl;
+    	for(int i=0;i<10;i++)
+    		fout<<tVector[i].first<<": "<<tVector[i].second<<endl;
+	}
+    else{
+    	fout<<"频率最高的"<<tVector.size()<<"个单词如下:"<<endl;
+		for(int i=0;i<tVector.size();i++)  
+	    	fout<<tVector[i].first<<": "<<tVector[i].second<<endl;
+	}
 	fin.close();
 	fout.close();
 }
 
-int main(int argc, char *argv[]){	
+int main(int argc,char **argv){  
+	if(argc!=3){
+		cout <<"输入input.txt/output.txt"<<endl;
+	}
+	countCharNum();
 	Paper p;
 	p.fread(argv[1]);//input.txt
 	p.fwrite(argv[2]);//output.txt
