@@ -1,4 +1,4 @@
-/*»ù±¾ÄÜ¹»ÊµÏÖÎÄÕÂµÄÉú³É²¢Ğ´ÈëÎÄ¼ş£¬ÓÃ×÷²âÊÔÑùÀı*/
+/*ç¬¬äºŒæ¬¡ä¿®æ”¹ï¼šç”¨æˆ·æ§åˆ¶å•è¯æ•°ï¼Œå•è¯é•¿åº¦ã€‚é€šè¿‡æ˜¾ç¤ºçœ‹æ•ˆæœ*/
 #include<cstdio>
 #include<iostream>
 #include<fstream>
@@ -6,36 +6,53 @@
 #include<cstring>
 #include<stdlib.h>
 using namespace std;
-const int WORDSMAX=1000;//×î´óµ¥´ÊÊı 
-const int WORDSLENGTH=5;//×î´óµ¥´Ê³¤¶È 
+
 
 int main()
 {	
+	char c;
+	int wordsmax,wordslength;//æœ€å¤§å•è¯æ•°ï¼Œå•è¯é•¿åº¦
 	srand(time(0));	
 	ofstream fout;
 	fout.open("w2.txt");
-	int n=rand()%(3*WORDSMAX/4)+WORDSMAX/4;//µ¥´ÊÏŞÖÆ (k/4~k),Ê¹ÎÄÕÂÄÚÈİ¾¡Á¿±¥Âú 
-	cout<<"   ";//Ê×ĞĞËõ½øËÄ¸ö×ÖÄ¸ 
-	while(n--)                              //¿ªÊ¼Éú³Éµ¥´Ê 
+	cout<<"è¯·é™åˆ¶å•è¯æ•°é‡ï¼š";
+	cin>>wordsmax; 
+	cout<<"è¯·é™åˆ¶å•è¯é•¿åº¦ï¼š";//å•è¯è¶Šé•¿ï¼Œæ¯ä¸ªå•è¯å‡ºç°çš„é¢‘ç‡è¶Šä½ 
+	cin>>wordslength;
+	int n=rand()%(3*wordsmax/4)+wordsmax/4;//å•è¯é™åˆ¶ (k/4~k),ä½¿æ–‡ç« å†…å®¹å°½é‡é¥±æ»¡ 
+	cout<<"äºæ˜¯ï¼Œä½ å¾—åˆ°"<<n<<"ä¸ªå•è¯çš„æ–‡ç« "<<endl;                                      
+	cout<<"æ˜¯å¦æ˜¾ç¤ºæ–‡ç« ï¼Ÿï¼ˆy|nï¼‰ï¼š";
+	cin>>c;
+	putchar('\n');
+	cout<<"   ";//é¦–è¡Œç¼©è¿›å››ä¸ªå­—æ¯ 			
+	while(n--)                              //ç”Ÿæˆå•è¯ 
 	{
-		printf(" ");						//µ¥´Ê¼äµÄ¿Õ¸ñ  
-		int k=rand()%WORDSLENGTH+1;         //Ã¿¸öµ¥´ÊµÄ³¤¶È 
+		int k=rand()%wordslength+4;         //æ¯ä¸ªå•è¯çš„é•¿åº¦ 
 		for(int i=1;i<=k;i++)
 		{
-			int x,s;                         //x±íÊ¾µ±Ç°×Ö·ûµÄasciiÂë £¬s¿ØÖÆ×Ö·ûµÄ´óĞ¡Ğ´  
-			s=rand()%2;                      //Ëæ»úÊ¹sÎª1»ò0 
-			if(s==1)
-			{                        		 //s=1,x->´óĞ´×ÖÄ¸
+			int x,s;                         //xè¡¨ç¤ºå½“å‰å­—ç¬¦çš„asciiç  ï¼Œsæ§åˆ¶å­—ç¬¦çš„å¤§å°å†™  
+			s=rand()%2;                      //éšæœºä½¿sä¸º1æˆ–0 
+			if(s==1){                        //s=1,x->å¤§å†™å­—æ¯
 				x=rand()%('Z'-'A'+1)+'A'; 	 
 			}     
-			else {							 //s=0,x->Ğ¡Ğ´×ÖÄ¸ 
+			else {							 //s=0,x->å°å†™å­—æ¯ 
 				x=rand()%('z'-'a'+1)+'a';    
 			}
-			printf("%c",x);  
-			fout<<(char)x;   //Ğ´ÈëÎÄ¼ş
+			if (c=='y'){
+				printf("%c",x);
+
+				fout<<(char)x;
+			}
+			if (c=='n') {
+				fout<<(char)x;	
+			}        
+						
 		}
-		fout<<" ";
-	}	
+		wcnt++;
+		printf(" ");						//å•è¯é—´çš„ç©ºæ ¼  
+		fout<<" ";		
+	}		
+	cout<<endl<<"ä¸€å…±"<<wcnt<<"ä¸ªå•è¯";//åˆæ­¥ç»Ÿè®¡ï¼Œä¹‹åä¼šæ”¹ä¸ºæœ‰æ•ˆå•è¯æ•°	
 	fout.close();
 	return 0;
 }
