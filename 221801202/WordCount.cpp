@@ -1,9 +1,11 @@
-#include<cstdio>
-#include<iostream>
-#include<fstream>
-#include<time.h>
-#include<cstring>
-#include<stdlib.h>
+#include <cstring>
+#include <cstdlib>
+#include <fstream>
+#include <sstream>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <map>  
 const int rowsPerPar=4;//每段的最大行数、
 const int wordsPerRow=15;//每行单词数、
 const int wordsmax=300;//最大单词数
@@ -15,6 +17,17 @@ class Words{ //单词类
 		string word; //单词
 		int cnt; //数量
 };
+
+int cmpare(const pair<string, int>& x, const pair<string, int>& y)  {  //value比较 
+    return x.second > y.second;   
+}  
+   
+void sort(map<string, int>& tMap,vector<pair<string, int> >& wordVector)  {  //词频排序 
+    for (map<string, int>::iterator curr = tMap.begin(); curr != tMap.end(); curr++)   
+        wordVector.push_back(make_pair(curr->first, curr->second));    
+   
+    sort(wordVector.begin(), wordVector.end(), cmpare);  
+} 
 
 bool isSeparator(char c){//判断分隔符：所有非数字且非字母 
 	return !(isupper(c)||islower(c)||isdigit(c));
@@ -101,53 +114,6 @@ int getCharNum(Words *words) {//从单词中统计字符
 	return charnum; //返回字符数
 }
 
-void createPaperAuto(){//随机文章生成器 
-	int rcnt=0,wcnt=0,wcntPerRow=0,lines=1,charNum=0;//行数计数器，单词数计数器 ,行数 ,字符数 
-	srand(time(0));	
-	ofstream fout1,fout2;//写文件 
-	fout1.open("input_random.txt");
-	fout2.open("output_random.txt");
-	int n=rand()%(3*wordsmax/4)+wordsmax/4;//单词限制 (k/4~k),使文章内容尽量饱满 
-	cout<<"得到"<<n<<"个初始单词的文章:"<<endl;
-	cout<<"    ";//首行缩进四个字符	
-	fout1<<"        ";		
-	while(n--)                              //生成单词 
-	{
-		int k=rand()%wordslength+4;         //每个单词的长度 
-		for(int i=1;i<=k;i++)
-		{
-			int x;
-			x=rand()%('~'-'!'+1)+'!';//生成从'!'到'~'的字符，对应ASCII码从33~126，其它键盘上没有 
-			charNum++;
-			printf("%c",x);
-			fout1<<(char)x;				
-		}
-		printf("   ");//一个单词生成后的间隔
-		fout1<<"   ";
-		if (wcntPerRow==wordsPerRow){ 
-			cout<<endl; 
-			fout1<<endl;
-			rcnt++;//行计数器+1
-			lines++;//行数+1 
-			if (rcnt>=rand()%rowsPerPar+1){//每段最大rowsPerPar行，最少1行
-				cout<<"    ";//新的段落首行缩进4个字符 
-				fout1<<"        ";
-				rcnt=0;//下一段重新计数 
-			} 
-			wcntPerRow=0;//下一行重新计数 
-		}						 
-		wcnt++;//单词计数器
-		wcntPerRow++;//每行单词计数器 
-				
-	}		
-	cout<<endl<<endl<<"文章写入完成！"<<endl;
-	/*fout2<<"characters:"<<charNum<<endl; 
-	fout2<<"words:"<<wcnt<<endl;	//初步统计，之后会改为统计有效单词 
-	fout2<<"lines:"<<lines<<endl;*/ 
-	fout1.close();
-	fout2.close();
-} 
-
 void countCharNum(){//输出字符个数 
 	Words words[wordsmax] = {"",0}; //单词对象变量定义与初始化
 	ofstream fout;
@@ -158,7 +124,26 @@ void countCharNum(){//输出字符个数
 } 
 int main(int argc, char *argv[])
 {	
-	countCharNum();
-	cout<<"文件处理成功！"<<endl;
+	int cnt=0;
+	ifstream fin;
+	fin.open("input.txt");//打开文件 
+	if(fin.fail())
+	{
+		cout <<"ifstream open file error"<<endl;
+		return -1;
+	}
+    map<string, int> tMap;  
+    string word; 
+    while (fin >> word)  
+    {  
+        pair<map<string,int>::iterator,bool> ret = tMap.insert(make_pair(word, 1));  
+        if (!ret.second)  
+            ++ret.first->second;  
+    }   
+   
+    vector<pair<string,int> > wordVector;  
+    sort(tMap,wordVector);  
+    for(int i=0;i<wordVector.size();i++)  
+    cout<<wordVector[i].first<<": "<<wordVector[i].second<<endl;  
 	return 0;
 }
