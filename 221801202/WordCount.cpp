@@ -12,6 +12,15 @@ const int wordsmax=300;//最大单词数
 const int wordslength=7;//单词长度
 
 using namespace std;
+
+class Paper{//对文件的文章类 
+public:
+	void fread(char * filename);
+	void fwrite(char * filename);
+private:
+	map<string,int> words;
+};
+
 class Words{ //单词类
 	public:
 		string word; //单词
@@ -122,28 +131,53 @@ void countCharNum(){//输出字符个数
 	fout<<"搜索出共"<<n<<"个字符。"<<endl;
 	fout.close();
 } 
-int main(int argc, char *argv[])
-{	
-	int cnt=0;
+
+void Paper::fread(char * filename){//读文件 
+	ifstream ifs(filename);//打开文件流
+	if(ifs.fail())
+	{
+		cout <<"ifstream open file error"<<endl;
+		return;
+	}
+	string word;
+	while( ifs >> word)
+	{
+		if(isValidWord(word))//如果为有效单词 
+		words[word]++;
+	}
+ 	ifs.close();
+}
+
+void Paper::fwrite(char * filename){//写文件 
+	int wcnt=0;//单词数量 
 	ifstream fin;
-	fin.open("input.txt");//打开文件 
+	ofstream fout;
+	fin.open("input.txt",ios::app|ios::out);//打开文件 
+	fout.open("output.txt",ios::app|ios::out);
 	if(fin.fail())
 	{
 		cout <<"ifstream open file error"<<endl;
-		return -1;
+		
 	}
     map<string, int> tMap;  
     string word; 
-    while (fin >> word)  
-    {  
-        pair<map<string,int>::iterator,bool> ret = tMap.insert(make_pair(word, 1));  
-        if (!ret.second)  
-            ++ret.first->second;  
-    }   
-   
-    vector<pair<string,int> > wordVector;  
-    sort(tMap,wordVector);  
-    for(int i=0;i<wordVector.size();i++)  
-    cout<<wordVector[i].first<<": "<<wordVector[i].second<<endl;  
+    while (fin >> word) {//单词计数  	
+		transform(word.begin(),word.end(),word.begin(),::tolower);
+	    if(isValidWord(word)){
+	        pair<map<string,int>::iterator,bool> ret = tMap.insert(make_pair(word, 1));  
+	        if (!ret.second)  
+	            ++ret.first->second; 
+				wcnt++;
+		} 
+    }
+	fin.close();
+	fout.close();
+}
+
+int main(int argc, char *argv[]){	
+	Paper p;
+	p.fread(argv[1]);//input.txt
+	p.fwrite(argv[2]);//output.txt
+	cout<<"请在output.txt查看结果！";
 	return 0;
 }
