@@ -10,6 +10,11 @@ const int wordsmax=300;//最大单词数
 const int wordslength=7;//单词长度
 
 using namespace std;
+class Words{ //单词类
+	public:
+		string word; //单词
+		int cnt; //数量
+};
 
 bool isSeparator(char c){//判断分隔符：所有非数字且非字母 
 	return !(isupper(c)||islower(c)||isdigit(c));
@@ -26,12 +31,6 @@ bool isValidWord(string str){//判断有效单词
 		}
 	}
 }
-
-class Words{ //单词类
-	public:
-		string word; //单词
-		int cnt; //数量
-};
 
 int CountLines(char *filename){//获取行数 
 	ifstream ReadFile;
@@ -55,12 +54,11 @@ int CountLines(char *filename){//获取行数
 	ReadFile.close();
 }
 
-int getWords(Words *words) {//词频统计函数 
-	int sum=0;//单词总数 
+int getCharNum(Words *words) {//从单词中统计字符 
 	ifstream fin,in;
 	ofstream fout;
-	fin.open("input.txt");//打开文件
-	fout.open("output.txt");//写入文件 
+	fin.open("input.txt",ios::in | ios::out | ios::binary);//打开文件
+	fout.open("output.txt",ios::in | ios::out | ios::binary);//写入文件 
 	if(!fin) {
 		cout<<"文件打开错误！"<<endl;
 		return -1;
@@ -97,14 +95,10 @@ int getWords(Words *words) {//词频统计函数
 				num++; //单词种类加一 
 			}
 		}
-		for(int i=0;i<num;i++)
-		sum+=words[i].cnt;
 	fout<<"characters:"<<charnum-1<<endl; 
-	fout<<"words:"<<sum<<endl;	//初步统计，之后会改为统计有效单词 
-	fout<<"lines:"<<CountLines("input.txt")<<endl;
 	fin.close(); //关闭文件
 	fout.close();//关闭文件 
-	return num; //返回单词个数
+	return charnum; //返回字符数
 }
 
 void createPaperAuto(){//随机文章生成器 
@@ -147,47 +141,24 @@ void createPaperAuto(){//随机文章生成器
 				
 	}		
 	cout<<endl<<endl<<"文章写入完成！"<<endl;
-	fout2<<"characters:"<<charNum<<endl; 
+	/*fout2<<"characters:"<<charNum<<endl; 
 	fout2<<"words:"<<wcnt<<endl;	//初步统计，之后会改为统计有效单词 
-	fout2<<"lines:"<<lines<<endl;
+	fout2<<"lines:"<<lines<<endl;*/ 
 	fout1.close();
 	fout2.close();
 } 
 
-void createPaperCommand(){//文件获取文章 
-	int sum=0;
+void countCharNum(){//输出字符个数 
 	Words words[wordsmax] = {"",0}; //单词对象变量定义与初始化
 	ofstream fout;
-	fout.open("output,txt");
-	int n=getWords(words); //获取单词
-	for(int i=0;i<n;i++)
-		sum+=words[i].cnt; 
-	fout<<"词频排名前十统计："<<endl;
-	for(int i=0;i<n;i++)
-	{
-	fout<<words[i].word<<':'<<words[i].cnt<<endl;
-	}
-	fout<<"搜索出共"<<sum<<"个单词。"<<endl;
+	fout.open("output.txt");
+	int n=getCharNum(words); //获取字符数 
+	fout<<"搜索出共"<<n<<"个字符。"<<endl;
 	fout.close();
 } 
 int main(int argc, char *argv[])
 {	
-	//Words words[wordsmax] = {"",0}; //单词对象变量定义与初始化
-	int choice;//文章获取方式
-	cout<<"选择文章获取方式:1.随机生成|2.文件获取"<<endl; 
-	cin>>choice;
-	switch(choice){
-		case 1:createPaperAuto();;break;//随机生成,向文件写入 
-		case 2:createPaperCommand();
-				cout<<"读取文件成功！"<<endl;break;//从文件获取 
-	}
-	/*int n=getWords(words); //获取单词
-	cout<<"词频排名前十统计："<<endl<<endl;
-	for(int i=0;i<n;i++)
-	{
-		
-	cout<<words[i].word<<':'<<words[i].cnt<<endl;
-	}
-	cout<<"一共"<<n<<"个单词"<<endl;*/
+	countCharNum();
+	cout<<"文件处理成功！"<<endl;
 	return 0;
 }
