@@ -1,58 +1,59 @@
-/*第二次修改：用户控制单词数，单词长度。通过显示看效果*/
+
 #include<cstdio>
 #include<iostream>
 #include<fstream>
 #include<time.h>
 #include<cstring>
 #include<stdlib.h>
+const int rowsPerPar=2;//每段的最大行数、
+const int wordsPerRow=4;//每行单词数、
+const int wordsmax=10;//最大单词数
+const int wordslength=5;//单词长度
+
 using namespace std;
 
-
-int main()
+void createPaper(void){
+	
+} 
+int main(int argc,char *argv[])
 {	
-	char c;
-	int wordsmax,wordslength;//最大单词数，单词长度
+	int rcnt=0,wcnt=0,wcntPerRow=0,lines=1,charNum=0;//行数计数器，单词数计数器 ,行数 ,字符数 
 	srand(time(0));	
 	ofstream fout;
 	fout.open("w2.txt");
-	cout<<"请限制单词数量：";
-	cin>>wordsmax; 
-	cout<<"请限制单词长度：";//单词越长，每个单词出现的频率越低 
-	cin>>wordslength;
 	int n=rand()%(3*wordsmax/4)+wordsmax/4;//单词限制 (k/4~k),使文章内容尽量饱满 
-	cout<<"于是，你得到"<<n<<"个单词的文章"<<endl;                                      
-	cout<<"是否显示文章？（y|n）：";
-	cin>>c;
-	putchar('\n');
-	cout<<"   ";//首行缩进四个字母 			
+	cout<<"得到"<<n<<"个初始单词的文章:"<<endl;
+	cout<<"    ";//首行缩进四个字符			
 	while(n--)                              //生成单词 
 	{
 		int k=rand()%wordslength+4;         //每个单词的长度 
 		for(int i=1;i<=k;i++)
 		{
-			int x,s;                         //x表示当前字符的ascii码 ，s控制字符的大小写  
-			s=rand()%2;                      //随机使s为1或0 
-			if(s==1){                        //s=1,x->大写字母
-				x=rand()%('Z'-'A'+1)+'A'; 	 
-			}     
-			else {							 //s=0,x->小写字母 
-				x=rand()%('z'-'a'+1)+'a';    
-			}
-			if (c=='y'){
-				printf("%c",x);
-
-				fout<<(char)x;
-			}
-			if (c=='n') {
-				fout<<(char)x;	
-			}        
-						
+			int x;
+			x=rand()%('~'-'!'+1)+'!';//生成从'!'到'~'的字符，对应ASCII码从33~127，其他键盘上没有 
+			charNum++;
+			printf("%c",x);
+			fout<<(char)x;				
 		}
-		wcnt++;
-		printf(" ");						//单词间的空格  
-		fout<<" ";		
+		printf("  ");//一个单词生成后的间隔
+		if (wcntPerRow==wordsPerRow){ 
+			cout<<endl; 
+			rcnt++;//行计数器+1
+			lines++; 
+			if (rcnt>=rand()%rowsPerPar+1){//每段最大rowsPerPar行，最少1行
+				cout<<"    ";//新的段落首行缩进4个字符 
+				rcnt=0;//下一段重新计数 
+			} 
+			wcntPerRow=0;//下一行重新计数 
+		}						 
+		wcnt++;//单词计数器
+		wcntPerRow++;//每行单词计数器 
+		fout<<" ";
+				
 	}		
-	cout<<endl<<"一共"<<wcnt<<"个单词";//初步统计，之后会改为有效单词数	
+	cout<<endl<<endl<<"characters:"<<charNum<<endl; 
+	cout<<"words:"<<wcnt<<endl;	//初步统计，之后会改为统计有效单词 
+	cout<<"lines:"<<lines<<endl;
 	fout.close();
 	return 0;
 }
